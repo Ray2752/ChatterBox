@@ -54,7 +54,14 @@ export async function sendFriendRequest(userId) {
 
 export async function getFriendRequests() {
   const response = await axiosInstance.get("/users/friend-requests");
-  return response.data;
+  const data = response.data;
+
+  return {
+    incomingReqs: Array.isArray(data.incomingReqs) ? data.incomingReqs : [],
+    acceptedReqs: Array.isArray(data.acceptedReqs)
+      ? data.acceptedReqs.filter((req) => req.recipient && req.recipient.profilePic && req.recipient.fullName)
+      : [],
+  };
 }
 
 export async function acceptFriendRequest(requestId) {
