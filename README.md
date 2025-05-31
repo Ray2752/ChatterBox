@@ -2,6 +2,8 @@
 
 **ChatterBox** is a responsive and interactive social web application that helps users connect with friends or meet new people. It includes a secure authentication system, real-time features, live chat, and interface personalization tools — all designed to enhance user experience and engagement.
 
+🔗 **Live Demo**: [ChatterBox on Render](https://chatterbox-g0qo.onrender.com)
+
 ## 🚀 Features
 
 - 🔐 **JWT-Based Authentication**  
