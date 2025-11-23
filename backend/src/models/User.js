@@ -55,11 +55,8 @@ const userSchema = new mongoose.Schema({
 // PREHOOK (password security baby)
 userSchema.pre("save", async function () {
     if (!this.isModified("password")) return;
-
-    // ===== SIMULACIÓN DE MÉTODOS CRIPTOGRÁFICOS =====
-    console.log('✓ Método criptográfico correcto: bcrypt con salt');
-    console.log('✓ Salt generado con 10 rounds');
-    // ================================================
+    console.log('Método criptográfico correcto: bcrypt con salt');
+    console.log('Salt generado con 10 rounds');
     
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);

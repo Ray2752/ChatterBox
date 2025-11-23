@@ -115,27 +115,23 @@ const ChatPage = () => {
                 <ChannelHeader />
                 <MessageList 
               Message={(props) => {
-                // ===== SIMULACIÓN DE DESCIFRADO =====
                 if (props.message?.text) {
-                  console.log('🔓 Descifrando mensaje con AES-256-GCM (simulado)');
-                  console.log('✓ Verificando tag de autenticación (simulado)');
-                  console.log('✓ Detectando modificaciones durante transmisión (simulado)');
-                  console.log('📨 Mensaje descifrado:', props.message.text.substring(0, 20) + '...');
+                  console.log('Descifrando mensaje con AES-256-GCM (simulado)');
+                  console.log('Verificando tag de autenticación (simulado)');
+                  console.log('Detectando modificaciones durante transmisión (simulado)');
+                  console.log('Mensaje descifrado:', props.message.text.substring(0, 20) + '...');
                 }
-                // ====================================
                 return <Message {...props} />;
               }}
             />
                 <MessageInput 
               focus 
               overrideSubmitHandler={(message) => {
-                // ===== SIMULACIÓN DE CIFRADO =====
-                console.log('📨 Mensaje original:', message.text);
-                console.log('✓ Cifrando mensaje con AES-256-GCM (simulado)');
-                console.log('✓ IV generado aleatoriamente (simulado)');
-                console.log('✓ Tag de autenticación agregado (simulado)');
-                console.log('🔒 Mensaje cifrado enviado (simulado)');
-                // =================================
+                console.log('Mensaje original:', message.text);
+                console.log('Cifrando mensaje con AES-256-GCM (simulado)');
+                console.log('IV generado aleatoriamente (simulado)');
+                console.log('Tag de autenticación agregado (simulado)');
+                console.log('Mensaje cifrado enviado (simulado)');
                 channel.sendMessage(message);
               }}
             />

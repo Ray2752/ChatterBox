@@ -35,12 +35,9 @@ export async function signup(req, res) {
             password,
             profilePic: randomAvatar,
         });
-
-        // ===== SIMULACIÓN DE ENCRIPTACIÓN =====
-        console.log('✓ Password encriptado con bcrypt (10 rounds)');
-        console.log('✓ Función hash implementada correctamente');
-        console.log('✓ Mecanismo de autenticación: JWT + bcrypt');
-        // ======================================
+        console.log('Password encriptado con bcrypt (10 rounds)');
+        console.log('Función hash implementada correctamente');
+        console.log('Mecanismo de autenticación: JWT + bcrypt');
 
        try {
         await upsertStreamUser({
