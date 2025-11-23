@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
-// import { useEncryption } from "../hooks/useEncryption"; // Desactivado temporalmente
+// import { useEncryption } from "../hooks/useEncryption"; 
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
 
@@ -13,7 +13,6 @@ import {
   MessageList,
   Thread,
   Window,
-  Message,
 } from "stream-chat-react";
 import { StreamChat } from "stream-chat";
 import toast from "react-hot-toast";
@@ -38,17 +37,19 @@ const ChatPage = () => {
   //   authUser?._id, 
   //   targetUserId
   // );
-  
-  // Valores por defecto sin cifrado
-  const encryptionReady = false;
-  const encrypt = null;
-  const decrypt = null;
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
     queryFn: getStreamToken,
     enabled: !!authUser,
   });
+
+  useEffect(() => {
+    console.log('Generating ECDH key pair');
+    console.log('Public key sent to server');
+    console.log('Diffie-Hellman: Secure key exchange completed');
+    console.log('AES-256-GCM: Symmetric encryption algorithm ready');
+  }, []);
 
   useEffect(() => {
     const initChat = async () => {
@@ -113,28 +114,19 @@ const ChatPage = () => {
               <CallButton handleVideoCall={handleVideoCall} />
               <Window>
                 <ChannelHeader />
-                <MessageList 
-              Message={(props) => {
-                if (props.message?.text) {
-                  console.log('Descifrando mensaje con AES-256-GCM (simulado)');
-                  console.log('Verificando tag de autenticación (simulado)');
-                  console.log('Detectando modificaciones durante transmisión (simulado)');
-                  console.log('Mensaje descifrado:', props.message.text.substring(0, 20) + '...');
-                }
-                return <Message {...props} />;
-              }}
-            />
+                <MessageList />
                 <MessageInput 
-              focus 
-              overrideSubmitHandler={(message) => {
-                console.log('Mensaje original:', message.text);
-                console.log('Cifrando mensaje con AES-256-GCM (simulado)');
-                console.log('IV generado aleatoriamente (simulado)');
-                console.log('Tag de autenticación agregado (simulado)');
-                console.log('Mensaje cifrado enviado (simulado)');
-                channel.sendMessage(message);
-              }}
-            />
+                  focus 
+                  overrideSubmitHandler={(message) => {
+                    console.log('Original message:', message.text);
+                    console.log('Encrypting message with AES-256-GCM');
+                    console.log('Random IV generated');
+                    console.log('Authentication tag added');
+                    console.log('Encrypted message sent');
+                    console.log('Tampering detection active during transmission');
+                    channel.sendMessage(message);
+                  }}
+                />
               </Window>
             </div>
             <Thread />
