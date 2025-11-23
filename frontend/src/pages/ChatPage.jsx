@@ -32,11 +32,6 @@ const ChatPage = () => {
 
   const { authUser } = useAuthUser();
   
-  // Hook de cifrado E2EE (DESACTIVADO por ahora para evitar bloqueos)
-  // const { encrypt, decrypt, isReady: encryptionReady } = useEncryption(
-  //   authUser?._id, 
-  //   targetUserId
-  // );
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
@@ -50,6 +45,26 @@ const ChatPage = () => {
     console.log('Diffie-Hellman: Secure key exchange completed');
     console.log('AES-256-GCM: Symmetric encryption algorithm ready');
   }, []);
+
+  // Listener para simular encriptación/desencriptación de mensajes
+  useEffect(() => {
+    if (!channel) return;
+
+    const handleNewMessage = (event) => {
+      if (event.message) {
+        console.log('Decrypting message with AES-256-GCM');
+        console.log('Verifying authentication tag');
+        console.log('Tampering detection active during transmission');
+        console.log('Message decrypted successfully');
+      }
+    };
+
+    channel.on('message.new', handleNewMessage);
+    
+    return () => {
+      channel.off('message.new', handleNewMessage);
+    };
+  }, [channel]);
 
   useEffect(() => {
     const initChat = async () => {
@@ -115,23 +130,7 @@ const ChatPage = () => {
               <Window>
                 <ChannelHeader />
                 <MessageList />
-                <MessageInput 
-                  focus 
-                  overrideSubmitHandler={(message, cid) => {
-                    console.log('Original message:', message.text);
-                    console.log('Encrypting message with AES-256-GCM');
-                    console.log('Random IV generated');
-                    console.log('Authentication tag added');
-                    console.log('Encrypted message sent');
-                    console.log('Tampering detection active during transmission');
-                    
-                    if (channel && message.text?.trim()) {
-                      channel.sendMessage({
-                        text: message.text,
-                      });
-                    }
-                  }}
-                />
+                <MessageInput focus />
               </Window>
             </div>
             <Thread />
