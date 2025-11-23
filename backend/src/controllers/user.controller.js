@@ -150,7 +150,7 @@ export async function getOutgoingFriendReqs(req, res) {
 
 /**
  * Obtiene la clave pública de un usuario para cifrado E2EE
- * Si el usuario no tiene clave pública, se genera una nueva
+ * Si el usuario no tiene clave pública, devuelve null (cifrado desactivado)
  */
 export async function getUserPublicKey(req, res) {
     try {
@@ -162,21 +162,15 @@ export async function getUserPublicKey(req, res) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        // Si el usuario no tiene clave pública, generar una
-        if (!user.publicKey) {
-            const { publicKey } = generateKeyPair();
-            user.publicKey = publicKey;
-            await user.save();
-        }
-
+        // Devolver la clave pública si existe, o null si no
         res.status(200).json({ 
             userId: user._id,
-            publicKey: user.publicKey,
+            publicKey: user.publicKey || null,
             fullName: user.fullName 
         });
     } catch (error) {
-        console.error("Error in getUserPublicKey:", error.message);
-        res.status(500).json({ message: "Internal server error" });
+        console.error("Error in getUserPublicKey:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 }
 
