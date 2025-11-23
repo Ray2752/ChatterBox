@@ -117,14 +117,19 @@ const ChatPage = () => {
                 <MessageList />
                 <MessageInput 
                   focus 
-                  overrideSubmitHandler={(message) => {
+                  overrideSubmitHandler={(message, cid) => {
                     console.log('Original message:', message.text);
                     console.log('Encrypting message with AES-256-GCM');
                     console.log('Random IV generated');
                     console.log('Authentication tag added');
                     console.log('Encrypted message sent');
                     console.log('Tampering detection active during transmission');
-                    channel.sendMessage(message);
+                    
+                    if (channel && message.text?.trim()) {
+                      channel.sendMessage({
+                        text: message.text,
+                      });
+                    }
                   }}
                 />
               </Window>
