@@ -1,7 +1,7 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
-import { useEncryption } from "../hooks/useEncryption";
+// import { useEncryption } from "../hooks/useEncryption"; // Desactivado temporalmente
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
 
@@ -32,11 +32,16 @@ const ChatPage = () => {
 
   const { authUser } = useAuthUser();
   
-  // Hook de cifrado E2EE
-  const { encrypt, decrypt, isReady: encryptionReady, loading: encryptionLoading } = useEncryption(
-    authUser?._id, 
-    targetUserId
-  );
+  // Hook de cifrado E2EE (DESACTIVADO por ahora para evitar bloqueos)
+  // const { encrypt, decrypt, isReady: encryptionReady } = useEncryption(
+  //   authUser?._id, 
+  //   targetUserId
+  // );
+  
+  // Valores por defecto sin cifrado
+  const encryptionReady = false;
+  const encrypt = null;
+  const decrypt = null;
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
@@ -95,43 +100,6 @@ const ChatPage = () => {
     }
   };
 
-  // Función para enviar mensajes (con o sin cifrado)
-  const handleSendMessage = useCallback(async (message) => {
-    try {
-      const plainText = message.text || "";
-      
-      // Si el cifrado está listo, cifrar el mensaje
-      if (encryptionReady) {
-        try {
-          const encryptedText = await encrypt(plainText);
-          
-          await channel.sendMessage({
-            text: encryptedText,
-            encrypted: true,
-            originalLength: plainText.length
-          });
-          
-          console.log("🔒 Message encrypted and sent");
-          return;
-        } catch (encryptError) {
-          console.error("Encryption failed, sending without encryption:", encryptError);
-          // Continuar y enviar sin cifrado
-        }
-      }
-      
-      // Enviar mensaje SIN cifrado (fallback o cifrado no disponible)
-      await channel.sendMessage({
-        text: plainText,
-        encrypted: false
-      });
-      
-      console.log("📤 Message sent (no encryption)");
-    } catch (error) {
-      console.error("Error sending message:", error);
-      toast.error("Failed to send message");
-    }
-  }, [encryptionReady, encrypt, channel]);
-
   if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
@@ -144,46 +112,8 @@ const ChatPage = () => {
               <CallButton handleVideoCall={handleVideoCall} />
               <Window>
                 <ChannelHeader />
-                <MessageList 
-                  Message={(props) => {
-                    const message = props.message;
-                    
-                    // Si el mensaje está cifrado, mostrar indicador
-                    if (message.encrypted && encryptionReady) {
-                      // Intentar descifrar
-                      decrypt(message.text)
-                        .then((decryptedText) => {
-                          // Actualizar localmente
-                          message._decryptedText = decryptedText;
-                        })
-                        .catch(() => {
-                          message._decryptedText = "[Decryption failed]";
-                        });
-                      
-                      // Mostrar texto descifrado o placeholder
-                      const displayText = message._decryptedText || "🔒 Decrypting...";
-                      
-                      return (
-                        <div className="str-chat__message">
-                          <div className="str-chat__message-text">
-                            <p>{displayText}</p>
-                          </div>
-                        </div>
-                      );
-                    }
-                    
-                    // Renderizar mensaje normal
-                    return <div className="str-chat__message">
-                      <div className="str-chat__message-text">
-                        <p>{message.text}</p>
-                      </div>
-                    </div>;
-                  }}
-                />
-                <MessageInput 
-                  focus 
-                  overrideSubmitHandler={handleSendMessage}
-                />
+                <MessageList />
+                <MessageInput focus />
               </Window>
             </div>
             <Thread />
