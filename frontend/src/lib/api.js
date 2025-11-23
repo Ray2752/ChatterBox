@@ -73,3 +73,15 @@ export async function getStreamToken() {
   const response = await axiosInstance.get("/chat/token");
   return response.data;
 }
+
+// ========== ENCRYPTION API ==========
+
+export async function getUserPublicKey(userId) {
+  const response = await axiosInstance.get(`/users/${userId}/public-key`);
+  return response.data;
+}
+
+export async function updateMyPublicKey(publicKey) {
+  const response = await axiosInstance.put("/users/my-public-key", { publicKey });
+  return response.data;
+}
