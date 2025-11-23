@@ -15,7 +15,9 @@ const PORT=process.env.PORT || 5001;
 const __dirname = path.resolve();
 
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.NODE_ENV === "production" 
+        ? process.env.FRONTEND_URL || true 
+        : "http://localhost:5173",
     credentials: true
 }))
 app.use(express.json());
