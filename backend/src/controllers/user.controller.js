@@ -4,7 +4,7 @@ import { generateKeyPair } from "../lib/encryption.js";
 
 export async function getRecommendedUsers(req, res) {
   try {
-    const currentUserId = req.user.id;
+    const currentUserId = req.user._id;
     const currentUser = req.user;
 
     const excludedIds = [currentUserId, ...(currentUser.friends || [])];
@@ -23,7 +23,7 @@ export async function getRecommendedUsers(req, res) {
 
 export async function getMyFriends(req, res) {
     try {
-        const user = await User.findById(req.user.id).select("friends")
+        const user = await User.findById(req.user._id).select("friends")
         .populate("friends","fullName profilePic nativeLanguage learningLanguage");
 
         res.status(200).json(user.friends);
@@ -35,7 +35,7 @@ export async function getMyFriends(req, res) {
 
 export async function sendFriendRequest(req, res) {
     try {
-        const myId = req.user.id;
+        const myId = req.user._id;
        const {id:recipientId} = req.params
 
        if(myId===recipientId){
@@ -86,7 +86,7 @@ export async function acceptFriendRequest(req, res) {
         }
 
         // Verify the current user is the recipient
-        if (friendRequest.recipient.toString() !== req.user.id) {
+        if (friendRequest.recipient.toString() !== req.user._id.toString()) {
             return res.status(403).json({
                 message: "You are not authorized to accept this request"
             });
@@ -118,12 +118,12 @@ export async function getFriendRequest(req, res) {
     console.log("Request User:", req.user); // ← añade esto
 
     const incomingReqs = await FriendRequest.find({
-      recipient: req.user.id,
+      recipient: req.user._id,
       status: "pending",
     }).populate("sender", "fullName profilePic nativeLanguage learningLanguage");
 
     const acceptedReqs = await FriendRequest.find({
-      sender: req.user.id,
+      sender: req.user._id,
       status: "accepted",
     }).populate("recipient", "fullName profilePic");
 
@@ -137,7 +137,7 @@ export async function getFriendRequest(req, res) {
 export async function getOutgoingFriendReqs(req, res) {
     try {
         const outgoingRequests = await FriendRequest.find({
-            sender: req.user.id,
+            sender: req.user._id,
             status: "pending",
         }).populate("recipient", "fullName profilePic nativeLanguage learningLanguage");
 
@@ -192,7 +192,7 @@ export async function updateMyPublicKey(req, res) {
         }
 
         const updatedUser = await User.findByIdAndUpdate(
-            req.user.id,
+            req.user._id,
             { publicKey },
             { new: true }
         ).select("publicKey");
