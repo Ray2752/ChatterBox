@@ -95,34 +95,44 @@ const ChatPage = () => {
     }
   };
 
-  // Función para enviar mensajes cifrados
+  // Función para enviar mensajes (con o sin cifrado)
   const handleSendMessage = useCallback(async (message) => {
     try {
-      if (!encryptionReady) {
-        toast.error("Encryption not ready yet");
-        return;
-      }
-
       const plainText = message.text || "";
       
-      // Cifrar el mensaje
-      const encryptedText = await encrypt(plainText);
+      // Si el cifrado está listo, cifrar el mensaje
+      if (encryptionReady) {
+        try {
+          const encryptedText = await encrypt(plainText);
+          
+          await channel.sendMessage({
+            text: encryptedText,
+            encrypted: true,
+            originalLength: plainText.length
+          });
+          
+          console.log("🔒 Message encrypted and sent");
+          return;
+        } catch (encryptError) {
+          console.error("Encryption failed, sending without encryption:", encryptError);
+          // Continuar y enviar sin cifrado
+        }
+      }
       
-      // Enviar mensaje cifrado con metadata
+      // Enviar mensaje SIN cifrado (fallback o cifrado no disponible)
       await channel.sendMessage({
-        text: encryptedText,
-        encrypted: true, // Flag para saber que está cifrado
-        originalLength: plainText.length // Para debugging
+        text: plainText,
+        encrypted: false
       });
       
-      console.log("🔒 Message encrypted and sent");
+      console.log("📤 Message sent (no encryption)");
     } catch (error) {
-      console.error("Error sending encrypted message:", error);
+      console.error("Error sending message:", error);
       toast.error("Failed to send message");
     }
   }, [encryptionReady, encrypt, channel]);
 
-  if (loading || !chatClient || !channel || encryptionLoading) return <ChatLoader />;
+  if (loading || !chatClient || !channel) return <ChatLoader />;
 
   return (
     <>

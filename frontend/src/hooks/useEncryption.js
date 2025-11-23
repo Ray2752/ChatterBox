@@ -22,7 +22,10 @@ export function useEncryption(currentUserId, targetUserId) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        if (!currentUserId || !targetUserId) return;
+        if (!currentUserId || !targetUserId) {
+            setLoading(false);
+            return;
+        }
 
         const initializeEncryption = async () => {
             try {
@@ -43,17 +46,35 @@ export function useEncryption(currentUserId, targetUserId) {
                     await storePrivateKey(myPrivateKey);
 
                     // Enviar clave pública al servidor
-                    await updateMyPublicKey(myPublicKey);
-                    console.log('✅ Public key sent to server');
+                    try {
+                        await updateMyPublicKey(myPublicKey);
+                        console.log('✅ Public key sent to server');
+                    } catch (err) {
+                        console.warn('⚠️ Could not send public key to server:', err);
+                        // Continuar sin cifrado
+                        setIsReady(false);
+                        setLoading(false);
+                        return;
+                    }
                 }
 
                 // 2. Obtener clave pública del otro usuario
-                const { publicKey: otherPublicKey } = await getUserPublicKey(targetUserId);
+                let otherPublicKey;
+                try {
+                    const response = await getUserPublicKey(targetUserId);
+                    otherPublicKey = response.publicKey;
+                } catch (err) {
+                    console.warn('⚠️ Could not get target user public key:', err);
+                    // Continuar sin cifrado
+                    setIsReady(false);
+                    setLoading(false);
+                    return;
+                }
                 
                 if (!otherPublicKey) {
                     console.warn('⚠️ Target user does not have a public key yet');
-                    toast.error('Encryption not available for this user yet');
                     setIsReady(false);
+                    setLoading(false);
                     return;
                 }
 
@@ -66,7 +87,7 @@ export function useEncryption(currentUserId, targetUserId) {
 
             } catch (error) {
                 console.error('❌ Error initializing encryption:', error);
-                toast.error('Could not initialize encryption');
+                // No mostrar error al usuario, simplemente desactivar cifrado
                 setIsReady(false);
             } finally {
                 setLoading(false);
