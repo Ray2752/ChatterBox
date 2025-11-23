@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
+import { useEncryption } from "../hooks/useEncryption";
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
 
@@ -18,7 +19,7 @@ import toast from "react-hot-toast";
 
 import ChatLoader from "../components/ChatLoader";
 import CallButton from "../components/CallButton";
-import Navbar from "../components/Navbar"; // ⬅️ Aquí importas tu Navbar
+import Navbar from "../components/Navbar";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -30,6 +31,12 @@ const ChatPage = () => {
   const [loading, setLoading] = useState(true);
 
   const { authUser } = useAuthUser();
+  
+  // Hook de cifrado E2EE
+  const { encrypt, decrypt, isReady: encryptionReady, loading: encryptionLoading } = useEncryption(
+    authUser?._id, 
+    targetUserId
+  );
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
@@ -88,7 +95,34 @@ const ChatPage = () => {
     }
   };
 
-  if (loading || !chatClient || !channel) return <ChatLoader />;
+  // Función para enviar mensajes cifrados
+  const handleSendMessage = useCallback(async (message) => {
+    try {
+      if (!encryptionReady) {
+        toast.error("Encryption not ready yet");
+        return;
+      }
+
+      const plainText = message.text || "";
+      
+      // Cifrar el mensaje
+      const encryptedText = await encrypt(plainText);
+      
+      // Enviar mensaje cifrado con metadata
+      await channel.sendMessage({
+        text: encryptedText,
+        encrypted: true, // Flag para saber que está cifrado
+        originalLength: plainText.length // Para debugging
+      });
+      
+      console.log("🔒 Message encrypted and sent");
+    } catch (error) {
+      console.error("Error sending encrypted message:", error);
+      toast.error("Failed to send message");
+    }
+  }, [encryptionReady, encrypt, channel]);
+
+  if (loading || !chatClient || !channel || encryptionLoading) return <ChatLoader />;
 
   return (
     <>
@@ -100,8 +134,46 @@ const ChatPage = () => {
               <CallButton handleVideoCall={handleVideoCall} />
               <Window>
                 <ChannelHeader />
-                <MessageList />
-                <MessageInput focus />
+                <MessageList 
+                  Message={(props) => {
+                    const message = props.message;
+                    
+                    // Si el mensaje está cifrado, mostrar indicador
+                    if (message.encrypted && encryptionReady) {
+                      // Intentar descifrar
+                      decrypt(message.text)
+                        .then((decryptedText) => {
+                          // Actualizar localmente
+                          message._decryptedText = decryptedText;
+                        })
+                        .catch(() => {
+                          message._decryptedText = "[Decryption failed]";
+                        });
+                      
+                      // Mostrar texto descifrado o placeholder
+                      const displayText = message._decryptedText || "🔒 Decrypting...";
+                      
+                      return (
+                        <div className="str-chat__message">
+                          <div className="str-chat__message-text">
+                            <p>{displayText}</p>
+                          </div>
+                        </div>
+                      );
+                    }
+                    
+                    // Renderizar mensaje normal
+                    return <div className="str-chat__message">
+                      <div className="str-chat__message-text">
+                        <p>{message.text}</p>
+                      </div>
+                    </div>;
+                  }}
+                />
+                <MessageInput 
+                  focus 
+                  overrideSubmitHandler={handleSendMessage}
+                />
               </Window>
             </div>
             <Thread />

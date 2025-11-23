@@ -43,7 +43,12 @@ const userSchema = new mongoose.Schema({
     friends: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-    }]
+    }],
+    // Claves públicas para cifrado E2EE (Diffie-Hellman)
+    publicKey: {
+        type: String,
+        default: "",
+    }
 }, 
 { timestamps: true });
 

@@ -1,5 +1,6 @@
 import FriendRequest from "../models/FriendRequest.js"
 import User from "../models/User.js"
+import { generateKeyPair } from "../lib/encryption.js";
 
 export async function getRecommendedUsers(req, res) {
   try {
@@ -145,5 +146,63 @@ export async function getOutgoingFriendReqs(req, res) {
         console.error("Error getOutgoingFriendReqs request:", error);
         return res.status(500).json({ message: "Internal server error12" });
     }
-    
+}
+
+/**
+ * Obtiene la clave pública de un usuario para cifrado E2EE
+ * Si el usuario no tiene clave pública, se genera una nueva
+ */
+export async function getUserPublicKey(req, res) {
+    try {
+        const { id: userId } = req.params;
+
+        const user = await User.findById(userId).select("publicKey fullName");
+        
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Si el usuario no tiene clave pública, generar una
+        if (!user.publicKey) {
+            const { publicKey } = generateKeyPair();
+            user.publicKey = publicKey;
+            await user.save();
+        }
+
+        res.status(200).json({ 
+            userId: user._id,
+            publicKey: user.publicKey,
+            fullName: user.fullName 
+        });
+    } catch (error) {
+        console.error("Error in getUserPublicKey:", error.message);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
+
+/**
+ * Actualiza la clave pública del usuario autenticado
+ */
+export async function updateMyPublicKey(req, res) {
+    try {
+        const { publicKey } = req.body;
+
+        if (!publicKey) {
+            return res.status(400).json({ message: "Public key is required" });
+        }
+
+        const updatedUser = await User.findByIdAndUpdate(
+            req.user.id,
+            { publicKey },
+            { new: true }
+        ).select("publicKey");
+
+        res.status(200).json({ 
+            success: true, 
+            publicKey: updatedUser.publicKey 
+        });
+    } catch (error) {
+        console.error("Error in updateMyPublicKey:", error.message);
+        res.status(500).json({ message: "Internal server error" });
+    }
 }
