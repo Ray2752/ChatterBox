@@ -1,27 +1,20 @@
-# 🔐 ChatterBox - Sistema de Cifrado End-to-End (E2EE)
-
-## 📚 Proyecto Escolar - Documentación Técnica
-
-### Autor: [Tu Nombre]
-### Fecha: Noviembre 2025
-### Materia: Seguridad en Comunicaciones
-
+# ChatterBox - Sistema de Cifrado End-to-End (E2EE)
 ---
 
-## 🎯 Resumen del Proyecto
+## Resumen del Proyecto
 
 ChatterBox implementa un sistema de **cifrado end-to-end (E2EE)** para mensajes de chat, cumpliendo con los siguientes requerimientos académicos:
 
-✅ **Cifrado de mensajes** usando AES-256-GCM  
-✅ **Autenticación de usuarios** con JWT + bcrypt  
-✅ **Detección de modificaciones** mediante authentication tags (GCM)  
-✅ **Intercambio seguro de claves** con Elliptic Curve Diffie-Hellman (ECDH)  
-✅ **Funciones hash** implementadas correctamente (bcrypt para contraseñas)  
-✅ **Interfaz amigable** que mantiene la UX del chat
+**Cifrado de mensajes** usando AES-256-GCM  
+**Autenticación de usuarios** con JWT + bcrypt  
+**Detección de modificaciones** mediante authentication tags (GCM)  
+**Intercambio seguro de claves** con Elliptic Curve Diffie-Hellman (ECDH)  
+**Funciones hash** implementadas correctamente (bcrypt para contraseñas)  
+**Interfaz amigable** que mantiene la UX del chat
 
 ---
 
-## 🔒 Tecnologías de Cifrado Implementadas
+## Tecnologías de Cifrado Implementadas
 
 ### 1. **AES-256-GCM (Advanced Encryption Standard - Galois/Counter Mode)**
 
@@ -31,9 +24,9 @@ ChatterBox implementa un sistema de **cifrado end-to-end (E2EE)** para mensajes 
 - Modo GCM que incluye autenticación integrada
 
 **¿Por qué GCM?**
-- ✅ Confidencialidad (el mensaje se cifra)
-- ✅ Integridad (detecta modificaciones)
-- ✅ Autenticación (verifica el origen)
+- Confidencialidad (el mensaje se cifra)
+- Integridad (detecta modificaciones)
+- Autenticación (verifica el origen)
 
 **Implementación:**
 ```javascript
@@ -50,7 +43,7 @@ await window.crypto.subtle.encrypt({
 
 ---
 
-### 2. **ECDH (Elliptic Curve Diffie-Hellman)**
+## 2. **ECDH (Elliptic Curve Diffie-Hellman)**
 
 **¿Qué es?**
 - Protocolo de intercambio de claves criptográficas
@@ -94,13 +87,13 @@ const hashedPassword = await bcrypt.hash(password, salt);
 ```
 
 **Seguridad:**
-- ✅ One-way function (irreversible)
-- ✅ Protección contra timing attacks
-- ✅ Resistente a fuerza bruta
+- One-way function (irreversible)
+- Protección contra timing attacks
+- Resistente a fuerza bruta
 
 ---
 
-## 🏗️ Arquitectura del Sistema
+## Arquitectura del Sistema
 
 ### Flujo Completo de un Mensaje
 
@@ -131,7 +124,7 @@ const hashedPassword = await bcrypt.hash(password, salt);
 │  • Cliente solicita clave pública del otro usuario          │
 │  • Calcula clave compartida: DH(mi_privada, su_pública)     │
 │  • Deriva clave AES-256 usando HKDF                          │
-│  • ✅ Ambos tienen la misma clave sin transmitirla           │
+│  • Ambos tienen la misma clave sin transmitirla              │
 └─────────────────────────────────────────────────────────────┘
                               ↓
 ┌─────────────────────────────────────────────────────────────┐
@@ -139,7 +132,7 @@ const hashedPassword = await bcrypt.hash(password, salt);
 ├─────────────────────────────────────────────────────────────┤
 │  Usuario A escribe: "Hola, ¿cómo estás?"                    │
 │                              ↓                               │
-│  🔐 CIFRADO (AES-256-GCM):                                   │
+│  CIFRADO (AES-256-GCM):                                   │
 │  • Genera IV aleatorio (12 bytes)                           │
 │  • Cifra mensaje con clave compartida                        │
 │  • Genera authentication tag (16 bytes)                      │
@@ -157,19 +150,19 @@ const hashedPassword = await bcrypt.hash(password, salt);
 │  Usuario B recibe mensaje cifrado:                          │
 │  "xK9p2vL...eH7s.mN4q...8zT.pR3w...7bY"                    │
 │                              ↓                               │
-│  🔓 DESCIFRADO:                                              │
+│   DESCIFRADO:                                              │
 │  • Separa: IV + AuthTag + Datos cifrados                    │
 │  • Verifica AuthTag (detecta modificaciones)                │
 │  • Descifra con clave compartida                            │
 │                              ↓                               │
-│  ✅ Resultado: "Hola, ¿cómo estás?"                          │
-│  • Muestra en interfaz con ícono 🔓                         │
+│   Resultado: "Hola, ¿cómo estás?"                          │
+│                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 📂 Estructura del Código
+## Estructura del Código
 
 ### Backend (Node.js)
 
@@ -218,103 +211,28 @@ const decryptedMsg = await decrypt(encryptedMsg);
 
 ---
 
-## 🔬 Seguridad Implementada
+## Seguridad Implementada
 
-### 1. **Confidencialidad** 🔒
-- ✅ Mensajes cifrados con AES-256 (estándar militar)
-- ✅ Claves nunca se transmiten (solo públicas)
-- ✅ IV aleatorio único por mensaje
+### 1. **Confidencialidad** 
+- Mensajes cifrados con AES-256 (estándar militar)
+- Claves nunca se transmiten (solo públicas)
+- IV aleatorio único por mensaje
 
-### 2. **Integridad** ✓
-- ✅ Authentication tag en GCM detecta modificaciones
-- ✅ Cualquier cambio en el mensaje causa error de descifrado
-
-### 3. **Autenticación** 🔑
-- ✅ JWT para identificar usuarios
-- ✅ bcrypt para verificar contraseñas
-- ✅ Cookies HTTP-only (protección XSS)
-
-### 4. **No Repudio** 📝
-- ✅ Solo el poseedor de la clave privada puede enviar mensajes válidos
-- ✅ Stream Chat registra timestamps y metadatos
-
-### 5. **Perfect Forward Secrecy** 🔄
-- ✅ Las claves se regeneran por sesión
-- ✅ Si una clave se compromete, mensajes pasados siguen seguros
-
+### 2. **Integridad** 
+- Authentication tag en GCM detecta modificaciones
+- Cualquier cambio en el mensaje causa error de descifrado
+### 3. **Autenticación** 
+- JWT para identificar usuarios
+- bcrypt para verificar contraseñas
+- Cookies HTTP-only (protección XSS)
+### 4. **No Repudio** 
+- Solo el poseedor de la clave privada puede enviar mensajes válidos
+- Stream Chat registra timestamps y metadatos
+    
+### 5. **Perfect Forward Secrecy** 
+- Las claves se regeneran por sesión
+- Si una clave se compromete, mensajes pasados siguen seguros
 ---
-
-## 🧪 Pruebas de Seguridad
-
-### Test 1: Interceptación de Mensajes
-**Escenario:** Un atacante captura el tráfico de red
-
-**Resultado:**
-```
-Mensaje original: "Hola, esto es secreto"
-Mensaje interceptado: "xK9p2vL...eH7s.mN4q...8zT.pR3w...7bY"
-Sin clave privada: IMPOSIBLE DESCIFRAR ❌
-```
-
-### Test 2: Modificación de Mensajes
-**Escenario:** Un atacante modifica un bit del mensaje cifrado
-
-**Resultado:**
-```javascript
-try {
-    await decrypt(mensajeModificado);
-} catch (error) {
-    // ✅ Error: "Failed to decrypt - message may be corrupted or tampered"
-}
-```
-
-### Test 3: Man-in-the-Middle
-**Escenario:** Atacante intenta suplantar identidad
-
-**Protección:**
-- ✅ JWT firmado con clave secreta del servidor
-- ✅ Cookies HTTP-only + SameSite=strict
-- ✅ HTTPS en producción
-
----
-
-## 📊 Comparación con Otros Métodos
-
-| Aspecto | ChatterBox (E2EE) | Cifrado en Servidor | Sin Cifrado |
-|---------|-------------------|---------------------|-------------|
-| **Privacidad** | ⭐⭐⭐⭐⭐ Solo usuarios leen | ⭐⭐⭐ Servidor puede leer | ⭐ Público |
-| **Seguridad** | ⭐⭐⭐⭐⭐ AES-256 + ECDH | ⭐⭐⭐ Depende del servidor | ⭐ Ninguna |
-| **Complejidad** | Alta (implementado) | Media | Baja |
-| **Performance** | Buena (cifrado rápido) | Muy buena | Excelente |
-
----
-
-## 💡 Mejoras Futuras
-
-### Implementadas ✅
-- [x] Cifrado AES-256-GCM
-- [x] Intercambio de claves ECDH
-- [x] Autenticación con JWT
-- [x] Hashing de contraseñas (bcrypt)
-- [x] Detección de modificaciones
-
-### Pendientes 🚧
-- [ ] Verificación de identidad (fingerprinting de claves)
-- [ ] Rotación automática de claves
-- [ ] Cifrado de archivos adjuntos
-- [ ] Autodestrucción de mensajes
-- [ ] Backup cifrado de historial
-
----
-
-## 📖 Referencias
-
-### Estándares y RFCs
-- **AES:** FIPS 197 - Advanced Encryption Standard
-- **GCM:** NIST SP 800-38D - Galois/Counter Mode
-- **ECDH:** RFC 6090 - Elliptic Curve Cryptography
-- **bcrypt:** Niels Provos & David Mazières (1999)
-- **JWT:** RFC 7519 - JSON Web Token
 
 ### Librerías Utilizadas
 - **Backend:** `crypto` (Node.js nativo), `bcryptjs`, `jsonwebtoken`
@@ -325,27 +243,3 @@ try {
 - **MongoDB:** Almacenamiento de claves públicas
 - **React:** Interfaz de usuario
 
----
-
-## 👨‍💻 Conclusión
-
-ChatterBox implementa un sistema robusto de cifrado end-to-end que garantiza:
-
-1. **Confidencialidad:** Solo los participantes pueden leer mensajes
-2. **Integridad:** Detecta cualquier modificación
-3. **Autenticación:** Verifica identidad de usuarios
-4. **Seguridad moderna:** Usa estándares de la industria
-
-El sistema cumple con todos los requerimientos académicos y puede servir como base para aplicaciones de mensajería segura en el mundo real.
-
----
-
-**Nota:** Este proyecto es educativo. Para uso en producción se recomienda:
-- Auditoría de seguridad profesional
-- Implementación de backup/recovery de claves
-- Pruebas exhaustivas de penetración
-- Cumplimiento de regulaciones (GDPR, etc.)
-
-**Desarrollado como parte del proyecto escolar de Seguridad en Comunicaciones**
-
-© 2025 ChatterBox - Sistema de Cifrado E2EE

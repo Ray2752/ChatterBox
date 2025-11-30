@@ -1,7 +1,4 @@
-# 🎨 Diagramas Visuales - Sistema de Cifrado ChatterBox
-
-## 📊 Para Presentación Escolar
-
+# Diagramas Visuales - Sistema de Cifrado ChatterBox
 ---
 
 ## 1. Arquitectura General del Sistema
@@ -95,7 +92,7 @@
 USUARIO A                           USUARIO B
 ─────────                           ─────────
 
-1️⃣ Generar claves                   1️⃣ Generar claves
+Generar claves                   Generar claves
    ┌──────────────┐                    ┌──────────────┐
    │ Privada A    │                    │ Privada B    │
    │ (SECRETA)    │                    │ (SECRETA)    │
@@ -105,7 +102,7 @@ USUARIO A                           USUARIO B
    └──────┬───────┘                    └──────┬───────┘
           │                                    │
           │                                    │
-2️⃣ Intercambio de claves PÚBLICAS              │
+Intercambio de claves PÚBLICAS              │
           │                                    │
           └──────────────┐   ┌────────────────┘
                          │   │
@@ -123,7 +120,7 @@ USUARIO A                           USUARIO B
    │ (recibida)   │                    │ (recibida)   │
    └──────────────┘                    └──────────────┘
 
-3️⃣ Calcular clave compartida          3️⃣ Calcular clave compartida
+Calcular clave compartida          Calcular clave compartida
    
    Shared = DH(Privada A, Pública B)   Shared = DH(Privada B, Pública A)
    
@@ -133,9 +130,9 @@ USUARIO A                           USUARIO B
    │  (256 bits)          │  ¡IGUALES! │  (256 bits)          │
    └──────────────────────┘            └──────────────────────┘
 
-✅ ¡Ambos tienen la MISMA clave sin haberla transmitido!
+¡Ambos tienen la MISMA clave sin haberla transmitido!
 
-🔐 Ahora pueden cifrar mensajes con AES-256-GCM usando esta clave
+Ahora pueden cifrar mensajes con AES-256-GCM usando esta clave
 ```
 
 ---
@@ -185,7 +182,7 @@ RESULTADO FINAL (base64):
         │            │            │
        IV       Auth Tag    Datos Cifrados
 
-✅ Este es el mensaje que se envía a través de Stream Chat
+Este es el mensaje que se envía a través de Stream Chat
 ```
 
 ---
@@ -239,9 +236,9 @@ MENSAJE RECIBIDO:
               │
               │
               ▼
-OUTPUT: "Hola, ¿cómo estás?" ✅
+OUTPUT: "Hola, ¿cómo estás?"
 
-✅ Mensaje descifrado correctamente
+Mensaje descifrado correctamente
 ```
 
 ---
@@ -256,7 +253,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ┌──────────────────────────────────────────────────────────────┐
 │ CAPA 7: APLICACIÓN                                           │
 ├──────────────────────────────────────────────────────────────┤
-│  🔐 E2EE (AES-256-GCM)                                       │
+│   E2EE (AES-256-GCM)                                       │
 │  • Mensajes cifrados punto a punto                           │
 │  • Solo usuarios leen contenido                              │
 │  • Auth tags detectan modificaciones                         │
@@ -265,7 +262,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ┌──────────────────────────────────────────────────────────────┐
 │ CAPA 6: INTERCAMBIO DE CLAVES                                │
 ├──────────────────────────────────────────────────────────────┤
-│  🔑 ECDH (Elliptic Curve Diffie-Hellman)                     │
+│   ECDH (Elliptic Curve Diffie-Hellman)                     │
 │  • Intercambio seguro sin transmitir claves                  │
 │  • Curva secp256k1 (backend) / P-256 (frontend)              │
 │  • Perfect Forward Secrecy                                   │
@@ -274,7 +271,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ┌──────────────────────────────────────────────────────────────┐
 │ CAPA 5: AUTENTICACIÓN                                        │
 ├──────────────────────────────────────────────────────────────┤
-│  🎫 JWT (JSON Web Tokens)                                    │
+│   JWT (JSON Web Tokens)                                    │
 │  • Firma digital con clave secreta                           │
 │  • Expiración de 7 días                                      │
 │  • Almacenado en cookies HTTP-only                           │
@@ -283,7 +280,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ┌──────────────────────────────────────────────────────────────┐
 │ CAPA 4: CONTRASEÑAS                                          │
 ├──────────────────────────────────────────────────────────────┤
-│  🔒 bcrypt (Hashing)                                         │
+│   bcrypt (Hashing)                                         │
 │  • Salt automático (10 rounds)                               │
 │  • One-way function (irreversible)                           │
 │  • Protección contra rainbow tables                          │
@@ -292,7 +289,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ┌──────────────────────────────────────────────────────────────┐
 │ CAPA 3: COOKIES                                              │
 ├──────────────────────────────────────────────────────────────┤
-│  🍪 Seguridad de Cookies                                     │
+│   Seguridad de Cookies                                     │
 │  • HTTP-only (protección XSS)                                │
 │  • SameSite=strict (protección CSRF)                         │
 │  • Secure en producción (solo HTTPS)                         │
@@ -301,7 +298,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ┌──────────────────────────────────────────────────────────────┐
 │ CAPA 2: TRANSPORTE                                           │
 ├──────────────────────────────────────────────────────────────┤
-│  🌐 HTTPS (TLS 1.3)                                          │
+│   HTTPS (TLS 1.3)                                          │
 │  • Cifrado en tránsito                                       │
 │  • Certificados SSL/TLS                                      │
 │  • Protección contra sniffing                                │
@@ -310,7 +307,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ┌──────────────────────────────────────────────────────────────┐
 │ CAPA 1: INFRAESTRUCTURA                                      │
 ├──────────────────────────────────────────────────────────────┤
-│  ☁️ MongoDB + Stream Chat                                    │
+│   MongoDB + Stream Chat                                    │
 │  • Almacenamiento cifrado                                    │
 │  • Backups encriptados                                       │
 │  • Firewalls y VPC                                           │
@@ -322,7 +319,7 @@ OUTPUT: "Hola, ¿cómo estás?" ✅
 ## 6. Comparación Visual: Con vs Sin Cifrado
 
 ```
-SIN CIFRADO (Inseguro) ❌
+SIN CIFRADO (Inseguro) 
 ═══════════════════════
 
 Usuario A ────► "Hola" ────► Servidor ────► "Hola" ────► Usuario B
@@ -336,7 +333,7 @@ Usuario A ────► "Hola" ────► Servidor ────► "Hola"
 
 ═══════════════════════════════════════════════════════════════════
 
-CON E2EE (Seguro) ✅
+CON E2EE (Seguro) 
 ═════════════════
 
 Usuario A ────► "Hola" ────► Cifrado local
@@ -360,7 +357,7 @@ Usuario A ────► "Hola" ────► Cifrado local
                                ▼
                             "Hola"
 
-LEGIBLE SOLO POR: Usuario A y Usuario B ✅
+LEGIBLE SOLO POR: Usuario A y Usuario B 
 ```
 
 ---
@@ -373,7 +370,7 @@ T=0ms     Usuario A escribe "Hola"
 T=5ms     Generar IV aleatorio
           │
 T=10ms    Cifrar con AES-256-GCM
-          │ 🔐 Mensaje cifrado
+          │  Mensaje cifrado
           │
 T=15ms    Enviar a Stream Chat
           │
@@ -385,11 +382,11 @@ T=55ms    ─────► Reenvía a Usuario B
 T=100ms   Usuario B recibe "xK9p2vL...7bY"
           │
 T=105ms   Descifrar con clave compartida
-          │ 🔓 Mensaje descifrado
+          │  Mensaje descifrado
           │
 T=110ms   Mostrar "Hola" en pantalla
           │
-          ✅ Proceso completo: ~110ms
+          Proceso completo: ~110ms
 ```
 
 ---
@@ -400,18 +397,15 @@ T=110ms   Mostrar "Hola" en pantalla
 ┌────────────────────┬──────────────────────┬────────────────┐
 │ Vector de Ataque   │ Sin E2EE             │ Con E2EE       │
 ├────────────────────┼──────────────────────┼────────────────┤
-│ Interceptación     │ ❌ Mensaje legible   │ ✅ Cifrado     │
-│ Modificación       │ ❌ Posible           │ ✅ Detectado   │
-│ Man-in-the-middle  │ ❌ Vulnerable        │ ✅ Protegido   │
-│ Servidor          │ ❌ Puede leer        │ ✅ No puede    │
-│ Base de datos leak │ ❌ Todo expuesto     │ ✅ Cifrado     │
-│ Replay attack      │ ❌ Posible           │ ✅ IV único    │
-│ Brute force        │ N/A                  │ ⏱️ Inviable   │
+│ Interceptación     │  Mensaje legible     │  Cifrado      │
+│ Modificación       │  Posible             │  Detectado    │
+│ Man-in-the-middle  │  Vulnerable          │  Protegido    │
+│ Servidor          │  Puede leer          │  No puede     │
+│ Base de datos leak │  Todo expuesto       │  Cifrado     │
+│ Replay attack      │  Posible             │  IV único    │
+│ Brute force        │ N/A                  │  Inviable   │
 └────────────────────┴──────────────────────┴────────────────┘
 ```
 
 ---
 
-**Nota:** Estos diagramas están diseñados para ser impresos y usados en presentaciones escolares. Puedes dibujarlos en una pizarra o incluirlos en una presentación de PowerPoint.
-
-© 2025 ChatterBox - Diagramas de Seguridad E2EE

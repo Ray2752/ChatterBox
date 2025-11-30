@@ -1,12 +1,5 @@
 import crypto from 'crypto';
-
-/**
- * Utilidad de cifrado End-to-End para ChatterBox
- * Implementa AES-256-GCM para cifrado simétrico
- * Usa ECDH (Elliptic Curve Diffie-Hellman) para intercambio de claves
- */
-
-// Algoritmo de cifrado: AES-256-GCM (seguro y con autenticación)
+// Algoritmo de cifrado: AES-256-GCM 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 12; // 96 bits recomendado para GCM
 const AUTH_TAG_LENGTH = 16; // 128 bits

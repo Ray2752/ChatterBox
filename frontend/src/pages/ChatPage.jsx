@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import useAuthUser from "../hooks/useAuthUser";
-// import { useEncryption } from "../hooks/useEncryption"; 
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
 
@@ -46,7 +45,6 @@ const ChatPage = () => {
     console.log('AES-256-GCM: Symmetric encryption algorithm ready');
   }, []);
 
-  // Listener para simular encriptación/desencriptación de mensajes
   useEffect(() => {
     if (!channel) return;
 
